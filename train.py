@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
 
+from make_dataloader import Dataset2Class
+
 class ConvNet(nn.Module):
     def __init__(self):
         super().__init__()
@@ -87,3 +89,37 @@ def fit_model(model, loss_fn, optimizer, epochs, train_data_loader):
         print(acc_epochs_list[-1])
         
     return loss_epochs_list, acc_epochs_list
+
+
+if __name__ == "__main__":
+    train_dogs_path = "./dataset/train/dogs/"
+    train_cats_path = "./dataset/train/cats/"
+    train_ds_catsdogs = Dataset2Class(train_dogs_path, train_cats_path)
+
+    test_dogs_path = "./dataset/test/dogs/"
+    test_cats_path = "./dataset/test/cats/"
+    test_ds_catsdogs = Dataset2Class(test_dogs_path, test_cats_path)
+
+    train_data_loader = torch.utils.data.DataLoader(
+        train_ds_catsdogs,
+        shuffle=True,
+        batch_size=batch_size,
+        num_workers=0,
+        drop_last=True,
+    )
+    
+    test_data_loader = torch.utils.data.DataLoader(
+        test_ds_catsdogs,
+        shuffle=True,
+        batch_size=batch_size,
+        num_workers=0,
+        drop_last=False,
+    )
+
+    model = ConvNet()
+    loss = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.999))
+    epochs = 40
+    batch_size = 16
+    
+    fit_model(model, loss, optimizer, epochs, train_data_loader)
