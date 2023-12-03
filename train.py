@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
+from omegaconf import DictConfig
 
 from make_dataloader import Dataset2Class
 
@@ -54,21 +55,20 @@ def accuracy(pred, label):
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="config")
-def fit_model(model, loss_fn):
+def fit_model(cfg: DictConfig):
+    model = ConvNet()
+    loss_fn = nn.CrossEntropyLoss()
     train_ds_catsdogs = Dataset2Class(cfg.dataset.train_dogs_path, cfg.dataset.train_cats_path)
     train_data_loader = torch.utils.data.DataLoader(
-    train_ds_catsdogs,
-    shuffle=cfg.train.shuffle,
-    batch_size=cfg.dataset.batch_size,
-    num_workers=cfg.dataset.num_workers,
-    drop_last=cfg.train.drop_last,
-    )
+        train_ds_catsdogs,
+        shuffle=cfg.train.shuffle,
+        batch_size=cfg.dataset.batch_size,
+        num_workers=cfg.dataset.num_workers,
+        drop_last=cfg.train.drop_last,
+        )
 
     OptimizerClass = hydra.utils.get_class(cfg.optimizer.optimizer_type)
     optimizer = OptimizerClass(model.parameters(), **cfg.optimizer.params)
-
-    SchedulerClass = hydra.utils.get_class(cfg.scheduler.scheduler_type)
-    scheduler = SchedulerClass(**cfg.scheduler.params)
 
     loss_epochs_list = []
     acc_epochs_list = []
@@ -94,7 +94,6 @@ def fit_model(model, loss_fn):
             acc_val += acc_current
 
         pbar.set_description(f'loss: {loss_item:.5f}\taccuracy: {acc_current:.3f}')
-        scheduler.step()
         loss_epochs_list += [loss_val/len(train_data_loader)]
         acc_epochs_list += [acc_val/len(train_data_loader)]
         print(loss_epochs_list[-1])
@@ -104,7 +103,4 @@ def fit_model(model, loss_fn):
 
 
 if __name__ == "__main__":
-    model = ConvNet()
-    loss = nn.CrossEntropyLoss()
-    
-    fit_model(model, loss)
+    fit_model()
