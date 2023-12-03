@@ -52,16 +52,27 @@ def accuracy(pred, label):
     return answer.mean()
 
 
-def fit_model(model, loss_fn, optimizer, epochs, train_data_loader):
-    scheduler = torch.optim.lr_scheduler.ExponentialLR(
-        optimizer,
-        gamma = 0.6
+@hydra.main(version_base=None, config_path="configs", config_name="config")
+def fit_model(model, loss_fn):
+    train_ds_catsdogs = Dataset2Class(cfg.dataset.train_dogs_path, cfg.dataset.train_cats_path)
+    train_data_loader = torch.utils.data.DataLoader(
+    train_ds_catsdogs,
+    shuffle=cfg.train.shuffle,
+    batch_size=cfg.dataset.batch_size,
+    num_workers=cfg.dataset.num_workers,
+    drop_last=cfg.train.drop_last,
     )
+
+    OptimizerClass = hydra.utils.get_class(cfg.optimizer.optimizer_type)
+    optimizer = OptimizerClass(model.parameters(), **cfg.optimizer.params)
+
+    SchedulerClass = hydra.utils.get_class(cfg.scheduler.scheduler_type)
+    scheduler = SchedulerClass(**cfg.scheduler.params)
 
     loss_epochs_list = []
     acc_epochs_list = []
 
-    for epoch in range(epochs):
+    for epoch in range(cfg.general.epochs):
         loss_val = 0
         acc_val = 0
         for sample in (pbar := tqdm(train_data_loader)):
@@ -92,34 +103,7 @@ def fit_model(model, loss_fn, optimizer, epochs, train_data_loader):
 
 
 if __name__ == "__main__":
-    train_dogs_path = "./dataset/train/dogs/"
-    train_cats_path = "./dataset/train/cats/"
-    train_ds_catsdogs = Dataset2Class(train_dogs_path, train_cats_path)
-
-    test_dogs_path = "./dataset/test/dogs/"
-    test_cats_path = "./dataset/test/cats/"
-    test_ds_catsdogs = Dataset2Class(test_dogs_path, test_cats_path)
-
-    train_data_loader = torch.utils.data.DataLoader(
-        train_ds_catsdogs,
-        shuffle=True,
-        batch_size=batch_size,
-        num_workers=0,
-        drop_last=True,
-    )
-    
-    test_data_loader = torch.utils.data.DataLoader(
-        test_ds_catsdogs,
-        shuffle=True,
-        batch_size=batch_size,
-        num_workers=0,
-        drop_last=False,
-    )
-
     model = ConvNet()
     loss = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.999))
-    epochs = 40
-    batch_size = 16
     
-    fit_model(model, loss, optimizer, epochs, train_data_loader)
+    fit_model(model, loss)
