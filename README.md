@@ -29,8 +29,8 @@ python train.py
 ```
 
 ## Predict on input
-install img.png
-install infer.py 
+install img.png  
+install infer.py  
 ```
 python infer.py
 ```
