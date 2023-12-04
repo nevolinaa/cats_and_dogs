@@ -1,4 +1,5 @@
 import hydra
+import joblib
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -103,6 +104,10 @@ def fit_model(cfg: DictConfig):
 
     return loss_epochs_list, acc_epochs_list
 
+def save_model(path, model):
+    with open(path, "wb") as file:
+        joblib.dump(model, file, compress=3)
 
 if __name__ == "__main__":
     fit_model()
+    save_model('model.joblib', model)
