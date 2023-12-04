@@ -3,8 +3,8 @@ A neural network to distinguish between pictures of cats and dogs
 
 ## Initial configuration
 **For usage:**
-install pyproject.toml
-install README.mdc
+install pyproject.toml  
+install README.md  
 ```
 pip install miniconda
 python -m venv cats_and_dogs
@@ -20,10 +20,10 @@ run pre-commint install
 run dvc pull to get all datasets and models  
 
 ## Train model
-install train.py 
-install make_dataloader.py 
-install configs
-install dataset
+install train.py  
+install make_dataloader.py  
+install configs  
+install dataset  
 ```
 python train.py
 ```
