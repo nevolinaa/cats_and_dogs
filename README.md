@@ -2,7 +2,8 @@
 A neural network to distinguish between pictures of cats and dogs
 
 ## Initial configuration
-**For usage:**
+**For usage:**  
+
 install pyproject.toml  
 install README.md  
 ```
@@ -11,7 +12,7 @@ python -m venv cats_and_dogs
 poetry install
 ```
 
-**For development:**
+**For development:**  
 
 install dvc  
 install pre-commit  
