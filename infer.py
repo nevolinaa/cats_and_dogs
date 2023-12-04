@@ -27,3 +27,10 @@ def show_image_and_label(img_path, model):
         print("It's a cat!")
     else:
         print("It's a dog!")
+
+if __name__ == "__main__":
+    img_path = 'img.png'
+    model_path = 'model.joblib'
+     with open(model_path, "rb") as file:
+         model = pickle.load(file)
+    show_image_and_label(img_path, model)
