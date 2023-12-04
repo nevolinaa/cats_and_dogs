@@ -24,6 +24,7 @@ install train.py
 install make_dataloader.py  
 install configs  
 install dataset  
+unzip the dataset files  
 ```
 python train.py
 ```
