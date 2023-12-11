@@ -1,4 +1,5 @@
 import cv2
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -32,5 +33,5 @@ if __name__ == "__main__":
     img_path = 'img.png'
     model_path = 'model.joblib'
      with open(model_path, "rb") as file:
-         model = pickle.load(file)
+         model = joblib.load(file)
     show_image_and_label(img_path, model)
