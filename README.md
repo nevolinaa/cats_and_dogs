@@ -10,6 +10,8 @@ install README.md
 pip install miniconda
 python -m venv cats_and_dogs
 poetry install
+pre-commit install
+pre-commit run -a
 ```
 
 **For development:**  
