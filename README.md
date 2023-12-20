@@ -12,6 +12,7 @@ python -m venv cats_and_dogs
 poetry install
 pre-commit install
 pre-commit run -a
+dvc checkout dataset.dvc --force -v
 ```
 
 **For development:**  
