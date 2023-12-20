@@ -7,6 +7,9 @@ import torch.nn.functional as F
 from PIL import Image
 
 
+img_path = 'img.png'
+model_path = 'model.joblib'
+
 def show_image_and_label(img_path, model):
     img = Image.open(img_path)
 
@@ -29,9 +32,10 @@ def show_image_and_label(img_path, model):
     else:
         print("It's a dog!")
 
-if __name__ == "__main__":
-    img_path = 'img.png'
-    model_path = 'model.joblib'
-     with open(model_path, "rb") as file:
+def make_prediction(img_path, model_path, model):
+    with open(model_path, "rb") as file:
          model = joblib.load(file)
-    show_image_and_label(img_path, model)
+    return show_image_and_label(img_path, model)
+
+if __name__ == "__main__":
+    make_prediction
